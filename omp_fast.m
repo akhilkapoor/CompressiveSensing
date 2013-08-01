@@ -15,15 +15,12 @@
 % per iteration.
 % 
 % NOTE: the matrix A is assumed to be normalized correctly.
-function [x,S,NormRes,NbIter, Ss, NormRess, deltaN] = omp_fast(y,A,S0,MaxNbIter,TolRes, epsConv, verbose)
+function [x,S,NormRes,NbIter, Ss, NormRess, deltaN] = omp_fast(y,A,S0,MaxNbIter,TolRes, verbose)
 
 [m,N]=size(A);
 
-if nargin < 7 || isempty(verbose)
+if nargin < 6 || isempty(verbose)
     verbose = false;
-end;
-if nargin < 6 || isempty(epsConv)
-    epsConv = 1e-2; %this should depend on the noise level in the signal
 end;
 if nargin < 5 || isempty(TolRes)
    TolRes=1e-4; 
@@ -53,7 +50,7 @@ rn = y;
 linsolveopts.UT = true;
 linsolveopts.LT = false;
 
-while ( NbIter < MaxNbIter && NormRes > TolRes && ~(NormRes/previousRes > 1-epsConv))
+while ( NbIter < MaxNbIter && NormRes > TolRes )
     [~,j]=max(abs(A'*res));
     S =sort([S, j]);
     AS=A(:,S);
@@ -68,9 +65,6 @@ while ( NbIter < MaxNbIter && NormRes > TolRes && ~(NormRes/previousRes > 1-epsC
     Ss{NbIter} = S;
     
     jidx = find(S == j);
-%     idx(end)
-%     S(idx(end))
-%     j
     
     deltaN(NbIter) = xS(jidx)*AS(:,jidx)'*rn;
     rn = res;
