@@ -14,11 +14,16 @@ function [x, S, NormRes, NbIter, Ss, NormRess] = htp(y,A,s,varargin)
 
 [~,N]=size(A);
 
-[checkArgs, x0, MaxNbIter, TolRes, verbose] = parse_Varargin(N, varargin{:});
+if size(varargin, 2)
+    [checkArgs, x0, MaxNbIter, TolRes, verbose] = parse_Varargin(N, varargin{:});
+else
+    [checkArgs, x0, MaxNbIter, TolRes, verbose] = parse_Varargin(N, {});
+end
 
 if ~checkArgs
-    x = []; S = []; NormRes = 0; NbIter = 0; Ss = []; NormRess = [];
-    return;
+%     x = []; S = []; NormRes = 0; NbIter = 0; Ss = []; NormRess = [];
+%     return;
+    disp('WARNING:^');
 end
 
 x = x0;
@@ -53,37 +58,35 @@ end
 
 end
 
-function [checkArgs, x0, MaxNbIter, TolRes, Verbose] = parse_Varargin(N, varargin)
+function [checkArgs, x0, MaxNbIter, TolRes, Verbose] = parse_Varargin(N, optional_param)
     
     x0=zeros(N,1);
     MaxNbIter = 500;
     TolRes = 1e-4;
     Verbose = false;
     
-    if rem(nargin - 1,2) ~= 0
+    [~, s] = size(optional_param);
+    if rem(s, 2) ~= 0
         checkArgs = false;
         disp('Variable argument list is incomplete.');
         disp('Given arguments:');
-        disp(varargin{:});
-        disp('Format: ''string'', value pairs expected.');
+        disp(optional_param{:});
+        disp('USAGE: ''parameter_name'', parameter_value pairs expected.');
     else
         checkArgs = true;
-        [~, s] = size(varargin);
         for i = 1:2:s
-            if strcmpi(varargin{i}, 'initX')
-                x0 = varargin{i+1};
-            elseif strcmpi(varargin{i}, 'MaxNbIter')
-                MaxNbIter = varargin{i+1};
-            elseif strcmpi(varargin{i}, 'TolRes')
-                TolRes = varargin{i+1};
-            elseif strcmpi(varargin{i}, 'Verbose')
-                Verbose = varargin{i+1};
+            if strcmpi(optional_param{i}, 'initX')
+                x0 = optional_param{i+1};
+            elseif strcmpi(optional_param{i}, 'MaxNbIter')
+                MaxNbIter = optional_param{i+1};
+            elseif strcmpi(optional_param{i}, 'TolRes')
+                TolRes = optional_param{i+1};
+            elseif strcmpi(optional_param{i}, 'Verbose')
+                Verbose = optional_param{i+1};
             else
                 checkArgs = false;
-                fprintf('Unexpected argument: %s', varargin{i});
-                return;
+                disp(['Unexpected optional parameter: ', optional_param{i}, '. ', mat2str(optional_param{i+1}), ' is being ignored.']);
             end
         end
-        
     end
 end
