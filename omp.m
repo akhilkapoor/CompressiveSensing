@@ -15,24 +15,15 @@
 % per iteration.
 % 
 % NOTE: the matrix A is assumed to be normalized correctly.
-function [x, S, NormRes, NbIter, Ss, NormRess, deltaN] = omp(y, A, S0, MaxNbIter, TolRes, verbose, speed)
+function [x, S, NormRes, NbIter, Ss, NormRess, deltaN] = omp(y, A, varargin)
 
 [m,N]=size(A);
 
-if nargin < 7 || isempty(speed)
-    speed = 0; % semi-fast by default
-end;
-if nargin < 6 || isempty(verbose)
-    verbose = false;
-end;
-if nargin < 5 || isempty(TolRes)
-   TolRes=1e-4; 
-end
-if nargin < 4 || isempty(MaxNbIter)
-   MaxNbIter=m;
-end
-if nargin < 3 || isempty(S0)
-   S0=[]; 
+[test, S0, MaxNbIter, TolRes, fast, verbose] = parse_Varargin(m, varargin{:});
+
+if ~test
+    x = []; S = []; NormRes = 0; NbIter = 0; Ss = []; NormRess = []; deltaN = [];
+    return;
 end
 
 % % [A,d]=nzedcol(A);
@@ -45,7 +36,7 @@ NbIter=0;
 
 Q = [];
 R = [];
-if speed == 1
+if fast == true
     [Q,R] = qr(AS);
     linsolveopts.UT = true;
     linsolveopts.LT = false;
@@ -60,7 +51,7 @@ while ( NbIter < MaxNbIter && NormRes > TolRes )
     [~,j]=max(abs(A'*res));
     S =sort([S, j]);
     AS=A(:,S);
-    if speed == 1
+    if fast == 1
         [Q,R] = qrinsert(Q,R, find(S == j),A(:,j));
         xS = linsolve(R, Q'*y, linsolveopts);
     else
@@ -88,4 +79,42 @@ end
 % x=zeros(N,1); x(S)=diag(1./d(S))*xS;
 x=zeros(N,1); x(S)=xS;
 
+end
+
+function [test, S0, MaxNbIter, TolRes, Fast, Verbose] = parse_Varargin(m, varargin)
+    
+    S0 = [];
+    MaxNbIter = m;
+    TolRes = 1e-4;
+    Verbose = false;
+    Fast = false;
+    
+    if rem(nargin - 1,2) ~= 0
+        test = false;
+        disp('Variable argument list is incomplete.');
+        disp('Given arguments:');
+        disp(varargin{:});
+        disp('Format: ''string'', value pairs expected.');
+    else
+        test = true;
+        [~, s] = size(varargin);
+        for i = 1:2:s
+            if strcmpi(varargin{i}, 'initS')
+                S0 = varargin{i+1};
+            elseif strcmpi(varargin{i}, 'MaxNbIter')
+                MaxNbIter = varargin{i+1};
+            elseif strcmpi(varargin{i}, 'TolRes')
+                TolRes = varargin{i+1};
+            elseif strcmpi(varargin{i}, 'Fast')
+                Fast = varargin{i+1};
+            elseif strcmpi(varargin{i}, 'Verbose')
+                Verbose = varargin{i+1};
+            else
+                test = false;
+                fprintf('Unexpected argument: %s', varargin{i});
+                return;
+            end
+        end
+        
+    end
 end
