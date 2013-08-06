@@ -19,9 +19,9 @@ function [x, S, NormRes, NbIter, Ss, NormRess, deltaN] = omp(y, A, varargin)
 
 [m,N]=size(A);
 
-[test, S0, MaxNbIter, TolRes, fast, verbose] = parse_Varargin(m, varargin{:});
+[checkArgs, S0, MaxNbIter, TolRes, fast, verbose] = parse_Varargin(m, varargin{:});
 
-if ~test
+if ~checkArgs
     x = []; S = []; NormRes = 0; NbIter = 0; Ss = []; NormRess = []; deltaN = [];
     return;
 end
@@ -81,7 +81,7 @@ x=zeros(N,1); x(S)=xS;
 
 end
 
-function [test, S0, MaxNbIter, TolRes, Fast, Verbose] = parse_Varargin(m, varargin)
+function [checkArgs, S0, MaxNbIter, TolRes, Fast, Verbose] = parse_Varargin(m, varargin)
     
     S0 = [];
     MaxNbIter = m;
@@ -90,13 +90,13 @@ function [test, S0, MaxNbIter, TolRes, Fast, Verbose] = parse_Varargin(m, vararg
     Fast = false;
     
     if rem(nargin - 1,2) ~= 0
-        test = false;
+        checkArgs = false;
         disp('Variable argument list is incomplete.');
         disp('Given arguments:');
         disp(varargin{:});
         disp('Format: ''string'', value pairs expected.');
     else
-        test = true;
+        checkArgs = true;
         [~, s] = size(varargin);
         for i = 1:2:s
             if strcmpi(varargin{i}, 'initS')
@@ -110,7 +110,7 @@ function [test, S0, MaxNbIter, TolRes, Fast, Verbose] = parse_Varargin(m, vararg
             elseif strcmpi(varargin{i}, 'Verbose')
                 Verbose = varargin{i+1};
             else
-                test = false;
+                checkArgs = false;
                 fprintf('Unexpected argument: %s', varargin{i});
                 return;
             end
