@@ -19,11 +19,16 @@ function [x, S, NormRes, NbIter, Ss, NormRess, deltaN] = omp(y, A, varargin)
 
 [m,N]=size(A);
 
-[checkArgs, S0, MaxNbIter, TolRes, fast, verbose] = parse_Varargin(m, varargin{:});
+if size(varargin, 2)
+    [checkArgs, S0, MaxNbIter, TolRes, fast, verbose] = parse_Varargin(m, varargin{:});
+else
+    [checkArgs, S0, MaxNbIter, TolRes, fast, verbose] = parse_Varargin(m, {});
+end
 
 if ~checkArgs
-    x = []; S = []; NormRes = 0; NbIter = 0; Ss = []; NormRess = []; deltaN = [];
-    return;
+%     x = []; S = []; NormRes = 0; NbIter = 0; Ss = []; NormRess = []; deltaN = [];
+%     return;
+    disp('WARNING:^');
 end
 
 % % [A,d]=nzedcol(A);
@@ -81,7 +86,7 @@ x=zeros(N,1); x(S)=xS;
 
 end
 
-function [checkArgs, S0, MaxNbIter, TolRes, Fast, Verbose] = parse_Varargin(m, varargin)
+function [checkArgs, S0, MaxNbIter, TolRes, Fast, Verbose] = parse_Varargin(m, optional_param)
     
     S0 = [];
     MaxNbIter = m;
@@ -89,32 +94,30 @@ function [checkArgs, S0, MaxNbIter, TolRes, Fast, Verbose] = parse_Varargin(m, v
     Verbose = false;
     Fast = false;
     
-    if rem(nargin - 1,2) ~= 0
+    [~, s] = size(optional_param);
+    if rem(s, 2) ~= 0
         checkArgs = false;
-        disp('Variable argument list is incomplete.');
-        disp('Given arguments:');
-        disp(varargin{:});
-        disp('Format: ''string'', value pairs expected.');
+        disp(['Variable argument list is incomplete. Given arguments:', optional_param{:}]);
+%         disp('Given arguments:');
+%         disp(optional_param{:});
+        disp('USAGE: ''parameter_name'', parameter_value pairs expected.');
     else
         checkArgs = true;
-        [~, s] = size(varargin);
         for i = 1:2:s
-            if strcmpi(varargin{i}, 'initS')
-                S0 = varargin{i+1};
-            elseif strcmpi(varargin{i}, 'MaxNbIter')
-                MaxNbIter = varargin{i+1};
-            elseif strcmpi(varargin{i}, 'TolRes')
-                TolRes = varargin{i+1};
-            elseif strcmpi(varargin{i}, 'Fast')
-                Fast = varargin{i+1};
-            elseif strcmpi(varargin{i}, 'Verbose')
-                Verbose = varargin{i+1};
+            if strcmpi(optional_param{i}, 'initS')
+                S0 = optional_param{i+1};
+            elseif strcmpi(optional_param{i}, 'MaxNbIter')
+                MaxNbIter = optional_param{i+1};
+            elseif strcmpi(optional_param{i}, 'TolRes')
+                TolRes = optional_param{i+1};
+            elseif strcmpi(optional_param{i}, 'Fast')
+                Fast = optional_param{i+1};
+            elseif strcmpi(optional_param{i}, 'Verbose')
+                Verbose = optional_param{i+1};
             else
                 checkArgs = false;
-                fprintf('Unexpected argument: %s', varargin{i});
-                return;
+                disp(['Unexpected optional parameter: ', optional_param{i}, '. ', mat2str(optional_param{i+1}), ' is being ignored.', optional_param{i}]);
             end
         end
-        
     end
 end
