@@ -15,12 +15,12 @@
 % per iteration.
 % 
 % NOTE: the matrix A is assumed to be normalized correctly.
-function [x,S,NormRes,NbIter, Ss, NormRess, deltaN] = omp(y,A,S0,MaxNbIter,TolRes, verbose, speed)
+function [x, S, NormRes, NbIter, Ss, NormRess, deltaN] = omp(y, A, S0, MaxNbIter, TolRes, verbose, speed)
 
 [m,N]=size(A);
 
 if nargin < 7 || isempty(speed)
-    speed = 1; % fast by default
+    speed = 0; % semi-fast by default
 end;
 if nargin < 6 || isempty(verbose)
     verbose = false;
