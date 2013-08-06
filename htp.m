@@ -10,17 +10,15 @@
 % SF (created 27/05/2012, modified 27/05/2012)
 % JLB: Modifications 02/08/2013
 % NOTE: the matrix A is column-normalized before HTP is run
-function [x,S,NormRes,NbIter, Ss, NormRess] = htp(y,A,s,x0,MaxNbIter,TolRes)
+function [x, S, NormRes, NbIter, Ss, NormRess] = htp(y,A,s,varargin)
 
 [~,N]=size(A);
-if nargin < 6 || isempty(TolRes)
-   TolRes=1e-4; 
-end
-if nargin < 5 || isempty(MaxNbIter)
-   MaxNbIter=500;
-end
-if nargin < 4 || isempty(x0)
-   x0=zeros(N,1); 
+
+[checkArgs, x0, MaxNbIter, TolRes, verbose] = parse_Varargin(N, varargin{:});
+
+if ~checkArgs
+    x = []; S = []; NormRes = 0; NbIter = 0; Ss = []; NormRess = [];
+    return;
 end
 
 x = x0;
@@ -53,4 +51,39 @@ while ( (sum(S==Snew)<s) && NbIter < MaxNbIter && NormRes > TolRes )
 %     pause
 end
 
+end
+
+function [checkArgs, x0, MaxNbIter, TolRes, Verbose] = parse_Varargin(N, varargin)
+    
+    x0=zeros(N,1);
+    MaxNbIter = 500;
+    TolRes = 1e-4;
+    Verbose = false;
+    
+    if rem(nargin - 1,2) ~= 0
+        checkArgs = false;
+        disp('Variable argument list is incomplete.');
+        disp('Given arguments:');
+        disp(varargin{:});
+        disp('Format: ''string'', value pairs expected.');
+    else
+        checkArgs = true;
+        [~, s] = size(varargin);
+        for i = 1:2:s
+            if strcmpi(varargin{i}, 'initX')
+                x0 = varargin{i+1};
+            elseif strcmpi(varargin{i}, 'MaxNbIter')
+                MaxNbIter = varargin{i+1};
+            elseif strcmpi(varargin{i}, 'TolRes')
+                TolRes = varargin{i+1};
+            elseif strcmpi(varargin{i}, 'Verbose')
+                Verbose = varargin{i+1};
+            else
+                checkArgs = false;
+                fprintf('Unexpected argument: %s', varargin{i});
+                return;
+            end
+        end
+        
+    end
 end
