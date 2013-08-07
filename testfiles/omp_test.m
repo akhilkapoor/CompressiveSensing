@@ -1,3 +1,5 @@
+addpath('./../algorithms');
+
 vecSize     = 1000; % Size of the vector in the 'original' input space
 nbMeasures  = 200; % size of the measurement vector
 
