@@ -1,5 +1,5 @@
 function [x,r,normR,residHist, errHist] = CoSaMP_Becker( A, b, k, errFcn, opts )
-% x = CoSaMP( A, b, k )
+% x = CoSaMP_Becker( A, b, k )
 %   uses the Compressive Sampling Matched Pursuit (CoSaMP) algorithm
 %   (see Needell and Tropp's 2008 paper http://arxiv.org/abs/0803.2392 )
 %   to estimate the solution to the equation
@@ -12,7 +12,7 @@ function [x,r,normR,residHist, errHist] = CoSaMP_Becker( A, b, k, errFcn, opts )
 %   the the least-squares step is performed using LSQR (use could also use
 %   CG on the normal equations, or other special variants).
 %
-% [x,r,normR,residHist,errHist] = CoSaMP( A, b, k, errFcn, opts )
+% [x,r,normR,residHist,errHist] = CoSaMP_Becker( A, b, k, errFcn, opts )
 %   is the full version.
 % Outputs:
 %   'x' is the k-sparse estimate of the unknown signal
