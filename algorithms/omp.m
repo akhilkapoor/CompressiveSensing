@@ -20,7 +20,15 @@ function [x, S, NormRes, NbIter, Ss, NormRess, deltaN] = omp(y, A, varargin)
 [m,N]=size(A);
 
 if size(varargin, 2)
-    [checkArgs, S0, MaxNbIter, TolRes, fast, verbose] = parse_Varargin(m, varargin{:});
+    if iscell(varargin{1})
+        [checkArgs, S0, MaxNbIter, TolRes, fast, verbose] = parse_Varargin(m, varargin{1});
+    else
+        disp('USAGE: ''parameter_name'', parameter_value pairs expected in a cell.');
+        disp(['Ignoring arguments: ', varargin]);
+        [~, S0, MaxNbIter, TolRes, fast, verbose] = parse_Varargin(m, {});
+        checkArgs = false;
+        
+    end
 else
     [checkArgs, S0, MaxNbIter, TolRes, fast, verbose] = parse_Varargin(m, {});
 end
@@ -97,10 +105,10 @@ function [checkArgs, S0, MaxNbIter, TolRes, Fast, Verbose] = parse_Varargin(m, o
     [~, s] = size(optional_param);
     if rem(s, 2) ~= 0
         checkArgs = false;
-        disp(['Variable argument list is incomplete. Given arguments:', optional_param{:}]);
+        disp(['Variable argument list is incomplete. Given arguments: ', optional_param{:}]);
 %         disp('Given arguments:');
 %         disp(optional_param{:});
-        disp('USAGE: ''parameter_name'', parameter_value pairs expected.');
+        disp('USAGE: ''parameter_name'', parameter_value pairs expected in a cell.');
     else
         checkArgs = true;
         for i = 1:2:s

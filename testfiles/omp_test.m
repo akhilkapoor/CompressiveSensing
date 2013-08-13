@@ -39,3 +39,8 @@ disp(['Test ', num2str(n)]); n = n+1;
 [xStar6,~,~,~,~,~] = omp(y,A,{'maxNbIter'});
 res = norm(x - xStar6);
 disp(['Using modified htp, the result is: ', num2str(res)]);
+
+disp(['Test ', num2str(n)]); n = n+1;
+[xStar7,~,~,~,~,~] = omp(y,A, 'fast', false );
+res = norm(x - xStar7);
+disp(['Using modified omp in sf mode, the result is: ', num2str(res)]);
