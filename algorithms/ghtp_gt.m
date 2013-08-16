@@ -29,7 +29,7 @@
 % Copyright:            Math Department, Drexel University, for scholar and
 % educational use only
 
-function [ x,S,NormRes,NbIter, Ss, NormRess ] = ghtp_gt( y, A, gt, varargin )
+function [ x, S, NormRes, NbIter, Ss, NormRess ] = ghtp_gt( y, A, gt, varargin )
 
 [~,N]=size(A);
 
