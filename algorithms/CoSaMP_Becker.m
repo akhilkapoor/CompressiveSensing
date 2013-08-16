@@ -120,7 +120,7 @@ r           = b;
 Ar          = At(r);
 N           = size(Ar,1);       % number of atoms
 M           = size(r,1);        % size of atoms
-if k > M/3
+if (k + addK) > M
     error('K cannot be larger than the dimension of the atoms');
 end
 x           = zeros(N,1);
