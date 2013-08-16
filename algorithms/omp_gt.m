@@ -36,7 +36,7 @@
 % This is version developed to use with the ground truth. We get out of the
 % loop once all the indices of the original signal have been recovered. 
 % the gt argument corresponds to the set of indices in the original signal
-function [x,S,NormRes,NbIter, Ss, NormRess] = omp_gt(y, A, gt, varargin)
+function [x, S, NormRes, NbIter, Ss, NormRess] = omp_gt(y, A, gt, varargin)
 
 [m,N]=size(A);
 
