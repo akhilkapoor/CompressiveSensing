@@ -34,8 +34,6 @@ else
 end
 
 if ~checkArgs
-%     x = []; S = []; NormRes = 0; NbIter = 0; Ss = []; NormRess = []; deltaN = [];
-%     return;
     disp('WARNING:^');
 end
 
@@ -105,9 +103,9 @@ function [checkArgs, S0, MaxNbIter, TolRes, Fast, Verbose] = parse_Varargin(m, o
     [~, s] = size(optional_param);
     if rem(s, 2) ~= 0
         checkArgs = false;
-        disp(['Variable argument list is incomplete. Given arguments: ', optional_param{:}]);
-%         disp('Given arguments:');
-%         disp(optional_param{:});
+        disp('Variable argument list is incomplete.');
+        disp('Given arguments:');
+        disp(optional_param{:});
         disp('USAGE: ''parameter_name'', parameter_value pairs expected in a cell.');
     else
         checkArgs = true;
