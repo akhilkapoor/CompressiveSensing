@@ -21,8 +21,6 @@ else
 end
 
 if ~checkArgs
-%     x = []; S = []; NormRes = 0; NbIter = 0; Ss = []; NormRess = [];
-%     return;
     disp('WARNING:^');
 end
 
