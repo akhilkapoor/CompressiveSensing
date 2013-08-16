@@ -33,23 +33,26 @@
 % This is version developed to use with the ground truth. We get out of the
 % loop once all the indices of the original signal have been recovered. 
 % the gt argument corresponds to the set of indices in the original signal
-function [x,S,NormRes,NbIter, Ss, NormRess] = ompnn_gt(y, A, gt, S0, MaxNbIter, tolRes, verbose)
+function [x, S, NormRes, NbIter, Ss, NormRess] = ompnn_gt(y, A, gt, varargin)
 
 [m,N]=size(A);
 
-if nargin < 7 || isempty(verbose)
-    verbose = false;
-end;
-
-if nargin < 6 || isempty(tolRes)
-    tolRes = 1e-4;
-end;
-
-if nargin < 5 || isempty(MaxNbIter)
-   MaxNbIter=N;
+if size(varargin, 2)
+    if iscell(varargin{1})
+        [checkArgs, S0, MaxNbIter, TolRes, verbose] = parse_Varargin(m, varargin{1});
+    else
+        disp('USAGE: ''parameter_name'', parameter_value pairs expected in a cell.');
+        disp(['Ignoring arguments: ', varargin]);
+        [~, S0, MaxNbIter, TolRes, verbose] = parse_Varargin(m, {});
+        checkArgs = false;
+        
+    end
+else
+    [checkArgs, S0, MaxNbIter, TolRes, verbose] = parse_Varargin(m, {});
 end
-if nargin < 4 || isempty(S0)
-   S0=[]; 
+
+if ~checkArgs
+    disp('WARNING:^');
 end
 
 % [A,d]=nzedcol(A);
@@ -66,7 +69,7 @@ xS = zeros(N,1);
 
 Ss = [];
 
-while ( NbIter < MaxNbIter && (sum(ismember(Sgt,S)) ~= length(Sgt) ) && (norm(xS-gt) > tolRes*normX) )
+while ( NbIter < MaxNbIter && (sum(ismember(Sgt,S)) ~= length(Sgt) ) && (norm(xS-gt) > TolRes*normX) )
     [~,j]=max(A'*res);
     S =sort([S, j]);
     AS=A(:,S);
@@ -89,4 +92,37 @@ end
 
 x=zeros(N,1); x(S)=xS_;
 
+end
+
+function [checkArgs, S0, MaxNbIter, TolRes, Verbose] = parse_Varargin(m, optional_param)
+    
+    S0 = [];
+    MaxNbIter = m;
+    TolRes = 1e-4;
+    Verbose = false;
+    
+    [~, s] = size(optional_param);
+    if rem(s, 2) ~= 0
+        checkArgs = false;
+        disp('Variable argument list is incomplete.');
+        disp('Given arguments:');
+        disp(optional_param{:});
+        disp('USAGE: ''parameter_name'', parameter_value pairs expected in a cell.');
+    else
+        checkArgs = true;
+        for i = 1:2:s
+            if strcmpi(optional_param{i}, 'initS')
+                S0 = optional_param{i+1};
+            elseif strcmpi(optional_param{i}, 'MaxNbIter')
+                MaxNbIter = optional_param{i+1};
+            elseif strcmpi(optional_param{i}, 'TolRes')
+                TolRes = optional_param{i+1};
+            elseif strcmpi(optional_param{i}, 'Verbose')
+                Verbose = optional_param{i+1};
+            else
+                checkArgs = false;
+                disp(['Unexpected optional parameter: ', optional_param{i}, '. ', mat2str(optional_param{i+1}), ' is being ignored.', optional_param{i}]);
+            end
+        end
+    end
 end
