@@ -26,17 +26,18 @@
 % Version:              1
 % Copyright:            Math Department, Drexel University, for scholar and
 % educational use only
-function [x,S,NormRes,NbIter, Ss, NormRess] = htpnn(y,A,s,x0,MaxNbIter,TolRes)
+function [x,S,NormRes,NbIter, Ss, NormRess] = htpnn(y,A,s,varargin)
 
 [~,N]=size(A);
-if nargin < 6 || isempty(TolRes)
-   TolRes=1e-4; 
+
+if size(varargin, 2)
+    [checkArgs, x0, MaxNbIter, TolRes, verbose] = parse_Varargin(N, varargin{:});
+else
+    [checkArgs, x0, MaxNbIter, TolRes, verbose] = parse_Varargin(N, {});
 end
-if nargin < 5 || isempty(MaxNbIter)
-   MaxNbIter=500;
-end
-if nargin < 4 || isempty(x0)
-   x0=zeros(N,1); 
+
+if ~checkArgs
+    disp('WARNING:^');
 end
 
 x = x0;
@@ -69,4 +70,37 @@ while ( (sum(S==Snew)<s) && NbIter < MaxNbIter && NormRes > TolRes )
 %     pause
 end
 
+end
+
+function [checkArgs, x0, MaxNbIter, TolRes, Verbose] = parse_Varargin(N, optional_param)
+    
+    x0=zeros(N,1);
+    MaxNbIter = 500;
+    TolRes = 1e-4;
+    Verbose = false;
+    
+    [~, s] = size(optional_param);
+    if rem(s, 2) ~= 0
+        checkArgs = false;
+        disp('Variable argument list is incomplete.');
+        disp('Given arguments:');
+        disp(optional_param{:});
+        disp('USAGE: ''parameter_name'', parameter_value pairs expected.');
+    else
+        checkArgs = true;
+        for i = 1:2:s
+            if strcmpi(optional_param{i}, 'initX')
+                x0 = optional_param{i+1};
+            elseif strcmpi(optional_param{i}, 'MaxNbIter')
+                MaxNbIter = optional_param{i+1};
+            elseif strcmpi(optional_param{i}, 'TolRes')
+                TolRes = optional_param{i+1};
+            elseif strcmpi(optional_param{i}, 'Verbose')
+                Verbose = optional_param{i+1};
+            else
+                checkArgs = false;
+                disp(['Unexpected optional parameter: ', optional_param{i}, '. ', mat2str(optional_param{i+1}), ' is being ignored.']);
+            end
+        end
+    end
 end
