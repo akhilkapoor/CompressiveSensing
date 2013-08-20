@@ -1,7 +1,7 @@
 addpath('./../algorithms');
 
 vecSize     = 1000; % Size of the vector in the 'original' input space
-nbMeasures  = 100; % size of the measurement vector
+nbMeasures  = 200; % size of the measurement vector
 
 A = randn( nbMeasures, vecSize ) / sqrt(nbMeasures);
 x = zeros(vecSize, 1);
