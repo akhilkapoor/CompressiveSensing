@@ -19,7 +19,7 @@ clear all;
 close all;
 clc;
 
-addpath('../engine/');
+addpath('./../algorithms/');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % PARAMETERS
@@ -93,7 +93,7 @@ for oneS=firstS:length(sparsities)
             
             
             % Use GHTP
-            [xstar,Sstar,NormRes,NbIter, Ss, NormRess] = ghtp2_gt( y, A, x, x0, MaxNbIter, tolSuccess, verbose ); 
+            [xstar,Sstar,NormRes,NbIter, Ss, NormRess] = ghtp2_gt( y, A, x, { 'initx', x0, 'maxnbiter', MaxNbIter, 'tolres', tolSuccess, 'verbose', verbose } ); 
             aSuccess = (norm(x-xstar) < tolSuccess*norm(x)); 
             nbSuccess_ghtp(thisS) = nbSuccess_ghtp(thisS) + aSuccess;
             if aSuccess
