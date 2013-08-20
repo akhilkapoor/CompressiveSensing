@@ -76,6 +76,9 @@ function [checkArgs, errFcn, opts] = parse_Varargin(optional_param)
             elseif strcmpi(optional_param{i}, 'LSQR_maxNbIter')
                 LSQR_maxNbIter = optional_param{i+1};
                 opts.('LSQR_maxit') = LSQR_maxNbIter;
+            elseif strcmpi(optional_param{i}, 'two_solves')
+                two_solves = optional_param{i+1};
+                opts.('two_solves') = two_solves;
             elseif strcmpi(optional_param{i}, 'errFcn')
                 errFcn = optional_param{i+1};
             else
