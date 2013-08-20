@@ -89,7 +89,9 @@ function [checkArgs, x0, MaxNbIter, TolRes, Verbose] = parse_Varargin(N, optiona
         checkArgs = true;
         for i = 1:2:s
             if strcmpi(optional_param{i}, 'initX')
-                x0 = optional_param{i+1};
+                if ~isempty(optional_param{i+1})
+                    x0 = optional_param{i+1};
+                end
             elseif strcmpi(optional_param{i}, 'MaxNbIter')
                 MaxNbIter = optional_param{i+1};
             elseif strcmpi(optional_param{i}, 'TolRes')
