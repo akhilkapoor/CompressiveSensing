@@ -1,10 +1,12 @@
-function [vOut, numIts] = romp_Vershynin(n, Phi, x)
-% [vOut] = romp_Vershynin(n, Phi, x)
+function [vOut, numIts] = romp_Vershynin(n, Phi, x, maxNumIts, rTol)
+% [vOut] = romp_Vershynin(n, Phi, x, maxNumIts, rTol)
 %%% PARAMETERS %%%%%%%%%%%%%%%%%%%%%%%%%%%
 % d = ambient dimension of the signal v
+% maxNumIts = maximum number of iterations
 % N = number of measurements
 % n = sparsity level of n
 % Phi = N by d measurement matrix
+% rTol = Residual Tolerance
 % x = measurement vector (Phi * v)
 % vOut = reconstructed signal
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -34,7 +36,7 @@ I = zeros(1,1);
 numIts = 0;
 
 %Run ROMP
-while length(I)-1 < 2*n && norm(r) > 10^(-6)
+while numIts < maxNumIts && norm(r) > rTol
 
    numIts = numIts + 1;
 
